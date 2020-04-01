@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo "Test done"
+echo "Test done
 exit 0
