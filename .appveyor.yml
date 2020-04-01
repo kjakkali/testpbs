@@ -1,0 +1,25 @@
+version: '#{build}'
+image: Visual Studio 2017
+pull_requests:
+  do_not_increment_build_number: true
+clone_depth: 5
+configuration:
+  - Debug
+  - Release
+before_build:
+  # - ps: choco install strawberryperl -y --no-progress --ignore-detected-reboot
+  # - ps: choco install wixtoolset -y --no-progress --ignore-detected-reboot
+  - cmd: refreshenv
+build_script:
+  - cmd: echo "Build done"
+after_build:
+  - cmd: echo "MSI generated"
+before_test:
+  - ps: $ip = [System.Net.Dns]::GetHostByName($env:computerName).AddressList[0].IPAddressToString
+  - ps: Add-Content C:\Windows\System32\Drivers\Etc\Hosts "$ip testdev.pbspro.org testdev"
+  - ps: net user $env:username pbS@123
+  - cmd: refreshenv
+  - cmd: echo "Installed MSI"
+deploy: off
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
